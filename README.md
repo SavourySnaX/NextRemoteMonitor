@@ -63,7 +63,9 @@ tape and copy it to the SD Card and then return it to the Next.
 I'm currently using PasmoNext (but I don't think i`m using any ZX80N specific instructions at present). 
 
 The SpectrumHost folder in the repository contains remote.asm and a bash script p  (which assembles and then copys the file to my flash
-air. I then hit F4 on the next keyboard and the remote.tap launches the latest version.
+air. I then hit F4 on the next keyboard and the remote.tap launches the latest version. The script assumes PasmoNexts location, but
+ultimately it boils down to ```PasmoNext -1 --alocal --tapbas remote.asm remote.tap```.
+
 
 !!Note, at present the PCHost application needs to be running, as I don't check for errors.!!
 
