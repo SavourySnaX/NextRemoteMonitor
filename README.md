@@ -37,7 +37,9 @@ Boot into NextBasic
 Type ```cd "nextzxos"``` and press return
 
 Type ```10 .tapein remote.tap``` and press return
+
 Type ```20 LOAD "t:"``` and press return
+
 Type ```30 LOAD ""``` and press return
 
 Type ```SAVE "AUTOEXEC.BAS" LINE 10``` and press return
