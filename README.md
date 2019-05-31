@@ -1,6 +1,9 @@
 # NextRemoteMonitor
 A remote monitor for working with the Spectrum Next via the ESP 8266 wifi module.
 
+The code is fixed to connect to a specific ip and port in both the PCHost and the SpectrumHost, you will need to 
+replace the IP's and ports if they are not suitable for your environment. Search for '192.168.5.2' and '9999'.
+
 # Quick Guide (or how i`m currently developing this)
 
 Assumes you have a spectrum next (currently using a 2A dev board) and an ESP Wifi module plugged in
