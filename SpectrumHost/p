@@ -1,0 +1,4 @@
+#!/bin/bash
+
+../../PasmoNext -1 --alocal --tapbas remote.asm remote.tap 
+cp remote.tap /o/remote.tap
