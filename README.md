@@ -73,3 +73,7 @@ ultimately it boils down to ```PasmoNext -1 --alocal --tapbas remote.asm remote.
 
 at this point the connection is running, follow the instructions in the PCHost application.
 
+## Known Issues
+
+Sometimes after a cold boot, the remote fails to connect, F4 reset, and it should connect the second/third time, after that it seems
+fine.
