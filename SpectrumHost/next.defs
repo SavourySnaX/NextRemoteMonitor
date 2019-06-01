@@ -1,0 +1,38 @@
+; vim:  autoindent noexpandtab tabstop=4 shiftwidth=4
+
+; Next Registers
+
+ZXNR_VID_TIM	equ		$11		; Video Timing Register
+
+ZXNR_MMU0		equ		$50		; $0000 - $1FFF
+ZXNR_MMU1		equ		$51		; $2000 - $3FFF
+ZXNR_MMU2		equ		$52		; $4000	- $6FFF
+ZXNR_MMU3		equ		$53		; $6000 - $7FFF
+ZXNR_MMU4		equ		$54		; $8000 - $9FFF
+ZXNR_MMU5		equ		$55		; $A000 - $BFFF
+ZXNR_MMU6		equ		$56		; $C000 - $DFFF
+ZXNR_MMU7		equ		$57		; $E000	- $FFFF
+
+
+; IO PORTS
+
+ZXN_REG_NUM     equ     $243B
+ZXN_REG_DATA    equ     $253B
+
+ZXN_UART_TX     equ     $133B
+; Read of TX shows FIFO status
+;       bit 0 - 0 if FIFO empty, 1 if data ready to be collected
+;       bit 1 - 0 if TX idle, 1 if still transmitting last byte
+;       bit 2 - 0 if buffer has space, 1 if full
+
+
+ZXN_UART_RX     equ     $143B
+; Write to RX configures prescalar - see UART_Initialise
+
+
+
+; +3 Basic Stuff
+; used for printing when debugging
+TVFLAG		equ	$5C3C
+
+

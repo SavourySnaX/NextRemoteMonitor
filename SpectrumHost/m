@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+../../PasmoNext -1 --alocal --bin monitor.asm monitor.bin 
+../../PasmoNext -1 --alocal --tapbas loader.asm remote.tap 
+cp remote.tap /o/remote.tap

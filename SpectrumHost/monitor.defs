@@ -1,0 +1,5 @@
+; vim:  autoindent noexpandtab tabstop=4 shiftwidth=4
+;
+
+MONITOR_BANK	equ		111		; last page in 1MB I think
+
