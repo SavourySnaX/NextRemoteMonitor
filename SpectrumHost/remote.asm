@@ -30,7 +30,7 @@
 	call	Rem_Initialise
 	jp		Rem_Process
 
-; Not currently checked at all, remote proceeds once "anything is recieved"
+; Used to allow the SimpleHost to identify we are using the standalone remote version
 ReadyMessage:	db		"RDY?",0
 
 
