@@ -10,30 +10,40 @@ namespace SimpleMonitor
 {
     class RemoteControl
     {
-        const string IPToBindTo = "192.168.5.2";
-        const Int32 PortToBindTo = 9999;
+        string IPToBindTo;
+        uint PortToBindTo;
 
+        class CommandArgs
+        {
+            public Command command;
+            public object[] arguments;
+        }
         // NOTE- Called from thread, be careful
-        public delegate void Command(NetworkStream connection);
+        public delegate void Command(NetworkStream connection,params object[] parameters);
 
         public delegate void Connected(string handshake);
         public delegate void Disconnected();
 
         Thread worker;
-        ConcurrentQueue<Command> commands;
+        ConcurrentQueue<CommandArgs> commands;
         bool hasConnection;
         string connectionHandshake;
-        bool closeDown;
 
         public Connected OnConnected {get; set;}
         public Disconnected OnDisconnected {get; set;}
 
-        public RemoteControl()
+
+        public RemoteControl(string ip, uint port)
         {
             OnConnected = null;
-            commands = new ConcurrentQueue<Command>();
+            commands = new ConcurrentQueue<CommandArgs>();
             hasConnection = false;
+            IPToBindTo = ip;
+            PortToBindTo = port;
+        }
 
+        public void StartServer()
+        {
             // Spin up a thread 
             worker = new Thread(delegate ()
             {
@@ -50,33 +60,42 @@ namespace SimpleMonitor
         public void StopServer()
         {
             Thread.Sleep(500);
+            server.Stop();
             worker.Abort();
         }
 
         // Send null to disconnect
-        public void SendCommand(Command command)
+        public void SendCommand(Command command,params object[] arguments)
         {
             if (hasConnection)
             {
-                commands.Enqueue(command);
+                if (command == null)
+                    commands.Enqueue(null);
+                else
+                {
+                    CommandArgs com = new CommandArgs();
+                    com.command = command;
+                    com.arguments = arguments;
+                    commands.Enqueue(com);
+                }
             }
         }
 
+        TcpListener server = null;
+
         void NextRemoteHandler()
         {
-            TcpListener server = null;
             try
             {
-                Int32 port = PortToBindTo;
                 IPAddress localAddr = IPAddress.Parse(IPToBindTo);
 
-                server = new TcpListener(localAddr, port);
+                server = new TcpListener(localAddr, (int)PortToBindTo);
 
                 server.Start();
 
                 List<byte> inputStream = new List<byte>(); 
                 Byte[] bytes = new Byte[4096];
-                while (!closeDown)
+                while (true)
                 {
                     TcpClient client = server.AcceptTcpClient();
 
@@ -110,18 +129,15 @@ namespace SimpleMonitor
                             connectionHandshake = System.Text.Encoding.ASCII.GetString(inputStream.ToArray());
                             
                             // flush any left over commands from prior connection
-                            Command ignored; while(commands.TryDequeue(out ignored));
+                            CommandArgs ignored; while(commands.TryDequeue(out ignored));
 
                             hasConnection = true;
-                            if (OnConnected!=null)
-                            {
-                                OnConnected(connectionHandshake);
-                            }
+                            OnConnected?.Invoke(connectionHandshake);
                         }
 
                         // Check if we have a pending command, 
 
-                        if (hasConnection && commands.TryDequeue(out Command result))
+                        if (hasConnection && commands.TryDequeue(out CommandArgs result))
                         {
                             if (result == null)
                             {
@@ -132,7 +148,7 @@ namespace SimpleMonitor
                             }
                             else
                             {
-                                result(stream);
+                                result.command(stream, result.arguments);
                             }
                         }
 
@@ -142,8 +158,7 @@ namespace SimpleMonitor
                     // Shutdown and end connection
                     client.Close();
 
-                    if (OnDisconnected != null)
-                        OnDisconnected();
+                    OnDisconnected?.Invoke();
                 }
             }
             catch (SocketException e)

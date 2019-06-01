@@ -8,7 +8,7 @@ namespace SimpleMonitor
 {
     static class Program
     {
-        public static RemoteControl rc=new RemoteControl();
+        public static RemoteControl rc;
 
         /// <summary>
         /// The main entry point for the application.
@@ -18,6 +18,8 @@ namespace SimpleMonitor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            rc = new RemoteControl(Properties.Settings.Default.Settings_IpBindAddress, Properties.Settings.Default.Settings_Port);
+            rc.StartServer();
             Application.Run(new MainForm());
         }
     }
