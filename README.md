@@ -29,7 +29,7 @@ Type ```AT+CWMODE=1``` this will set the module to work as a client (aka will co
 
 Type ```AT+CWLAP``` and you should see a list of Access Points - if you don't seek help elsewhere
 
-Type ```AT+CWJAP="<SSID>","<password>"```  replace <SSID> and <password> as appropriate for your home network
+Type ```AT+CWJAP="<SSID>","<password>"```  replace ```<SSID>``` and ```<password>``` as appropriate for your home network
 
 If all goes well you should see WIFI CONNECTED and WIFI GOT IP. If not seek help elsewhere
 
