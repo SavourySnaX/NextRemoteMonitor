@@ -11,24 +11,32 @@
 ; Not concerned with debugging code i don't develop, so this is fine for now
 ;  
 ; LAYOUT (Monitor Mode):
-;	MMU0 Monitor/Remote
-;	MMU7 Used for transfers
+;	MMU0 Monitor/Remote - Currently fixed
+;	MMU7 Used for transfers - only temporarily paged when needed
 ;
 
 ; Command Formats for Monitor
 ;
 ;  Listed here in terms of Spectrum Next view of things (e.g. download means the next is recieving data)
 ;
+; * - Implemented
 ;
-;   Initial Byte    |   Description	        |   Params
+;   Initial Byte    |   Description	        |*|   Params
 ;	---------------------------------------------------------------------
-;       00          | Exit                  | 	
-;       01          | Download Data Banked  |  BB 	- Byte - Destination Bank (Next MMU style)
-;                   |                       |  LLHH - Word - Destination Address (should be 0-$1fff)
-;                   |                       |  LLHH - Word - Length (limit to 2000 max, since we are using a bank
-;       02          | Upload Data Banked    |  BB 	- Byte - Destination Bank (Next MMU style)
-;                   |                       |  LLHH - Word - Destination Address (should be 0-$1fff)
-;                   |                       |  LLHH - Word - Length (limit to 2000 max, since we are using a bank
+;       00          | Exit                  |*| 	
+;       01          | Download Data Banked  |*|  BB 	- Byte - Destination Bank (Next MMU style)
+;                   |                       | |  LLHH - Word - Destination Address (should be 0-$1fff)
+;                   |                       | |  LLHH - Word - Length (limit to 2000 max, since we are using a bank)
+;       02          | Upload Data Banked    |*|  BB 	- Byte - Destination Bank (Next MMU style)
+;                   |                       | |  LLHH - Word - Destination Address (should be 0-$1fff)
+;                   |                       | |  LLHH - Word - Length (limit to 2000 max, since we are using a bank)
+;       03          | Set next register     | |  RR   - Byte - next register to set
+;                   |                       | |  VV   - Byte - value to set
+;       04          | Get next register     | |  RR   - Byte - next register to query
+;       05          | Set breakpoint        | |  NN   - Byte - breakpoint number (0-63)
+;                   |                       | |  BB   - Byte - Bank
+;                   |                       | |  LLHH - Word - Offset to place breakpoint (0-$1FFF)
+;       06          | Execute               | |  LLHH - Word - Address to start execution at (0-$FFFF)
 ;
 ;
 
@@ -66,10 +74,12 @@ MonitorStart:
 
 	call	Process					; Run the monitor, note if Exit command recieved, we will return
 
-	; TODO recover - for now crash horribly probably
+	; TODO recover - for now crash on purpose
 	ld		hl,(ExitAddress)
 	push	hl
-	ret
+
+_rebootme
+	jr	_rebootme
 
 MonitorHandshake:
 	db		"MON!",0
@@ -89,9 +99,20 @@ _Exit:
 	jp		Rem_Close
 
 _RecvData:
-	call	Rem_GetRawByte	; Get Bank - discard for now
-	call	Rem_GetRawWord	; Get Addr
-	ld		h,d
+	; Record current MMU7 page
+	ld		bc,ZXN_REG_NUM
+	ld		a,ZXNR_MMU7
+	out		(c),a
+	ld		bc,ZXN_REG_DATA
+	in		a,(c)
+	push	af
+
+	call	Rem_GetRawByte	; Get Bank
+	NextReg	ZXNR_MMU7,a
+	call	Rem_GetRawWord	; Get offset
+	ld		a,d
+	or		$E0				; Force $E000+offset
+	ld		h,a
 	ld		l,e
 	call	Rem_GetRawWord
 	ld		b,d
@@ -107,13 +128,28 @@ _RecvLoop:
 	ld		a,b
 	or		c
 	jr		nz,_RecvLoop
+
+	; Restore MMU7
+	pop		af
+	NextReg	ZXNR_MMU7,a
 	
 	jr		Process
 
 _SendData:
-	call	Rem_GetRawByte	; Get Bank - discard for now
+	; Record current MMU7 page
+	ld		bc,ZXN_REG_NUM
+	ld		a,ZXNR_MMU7
+	out		(c),a
+	ld		bc,ZXN_REG_DATA
+	in		a,(c)
+	push	af
+
+	call	Rem_GetRawByte	; Get Bank 
+	NextReg	ZXNR_MMU7,a
 	call	Rem_GetRawWord	; Get Addr
-	ld		h,d
+	ld		a,d
+	or		$E0				; Force $E000+offset
+	ld		h,a
 	ld		l,e
 	call	Rem_GetRawWord
 	ld		b,d
@@ -130,6 +166,10 @@ _SendLoop:
 	or		c
 	jr		nz,_SendLoop
 
+	; Restore MMU7
+	pop		af
+	NextReg	ZXNR_MMU7,a
+	
 	jr		Process
 
 
