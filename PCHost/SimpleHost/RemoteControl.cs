@@ -23,6 +23,7 @@ namespace SimpleHost
         Thread worker;
         ConcurrentQueue<Commands> commands;
         bool hasConnection;
+        string connectionHandshake;
 
         public RemoteControl()
         {
@@ -40,16 +41,13 @@ namespace SimpleHost
 
         public bool IsRunning => worker.IsAlive;
         public bool IsConnected => hasConnection;
+        public string Handshake => connectionHandshake;
 
 
         public void SendCommand(Commands command)
         {
             commands.Enqueue(command);
         }
-                    //commands.Enqueue(Commands.SendData);
-                    //commands.Enqueue(Commands.RecvData);
-                    //commands.Enqueue(Commands.Exit);
-
 
         void NextRemoteHandler()
         {
@@ -65,16 +63,12 @@ namespace SimpleHost
 
                 List<byte> inputStream = new List<byte>(); 
                 Byte[] bytes = new Byte[4096];
-                String data = null;
-
                 while (true)
                 {
                     TcpClient client = server.AcceptTcpClient();
 
                     // We only handle a single connection here at any time, 
                     //(How many Spectrum Nexts do you have?!)
-
-                    data = null;
 
                     // Get a stream object for reading and writing
                     NetworkStream stream = client.GetStream();
@@ -100,7 +94,7 @@ namespace SimpleHost
                         if (inputStream.Count > 0)
                         {
                             // Translate data bytes to a ASCII string.
-                            data = System.Text.Encoding.ASCII.GetString(inputStream.ToArray());
+                            connectionHandshake = System.Text.Encoding.ASCII.GetString(inputStream.ToArray());
                             hasConnection = true;
                         }
 
