@@ -106,5 +106,41 @@ namespace SimpleMonitor.Properties {
                 this["Settings_Location"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point MainWindow_Location {
+            get {
+                return ((global::System.Drawing.Point)(this["MainWindow_Location"]));
+            }
+            set {
+                this["MainWindow_Location"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size MainWindow_Size {
+            get {
+                return ((global::System.Drawing.Size)(this["MainWindow_Size"]));
+            }
+            set {
+                this["MainWindow_Size"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState MainWindow_State {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["MainWindow_State"]));
+            }
+            set {
+                this["MainWindow_State"] = value;
+            }
+        }
     }
 }

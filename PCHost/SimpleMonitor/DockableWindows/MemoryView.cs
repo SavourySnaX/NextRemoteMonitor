@@ -18,6 +18,25 @@ namespace SimpleMonitor.DockableWindows
         byte currentBank;
         MyByteProvider provider;
 
+        protected override List<Tuple<string,string>> Persist()
+        {
+            var t = new List<Tuple<string, string>>();
+            t.Add(Tuple.Create("BankNum.Value", BankNum.Value.ToString()));
+            return t;
+        }
+
+        protected override void Persist(string name,string value)
+        {
+            switch (name)
+            {
+                case "BankNum.Value":
+                    BankNum.Value = Convert.ToDecimal(value);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public MemoryView(string Type) : base(Type)
         {
             InitializeComponent();
@@ -35,11 +54,8 @@ namespace SimpleMonitor.DockableWindows
 
         void RefreshMemory()
         {
-            if (currentBank != BankNum.Value)
-            {
-                currentBank = (byte)BankNum.Value;
-                Program.rc.SendCommand(new RemoteControl.Command(RecvData), currentBank);
-            }
+            currentBank = (byte)BankNum.Value;
+            Program.rc.SendCommand(new RemoteControl.Command(RecvData), currentBank);
         }
 
         void RecvData(NetworkStream stream, params object[] arguments)

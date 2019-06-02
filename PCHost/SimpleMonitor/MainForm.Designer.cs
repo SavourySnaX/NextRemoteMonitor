@@ -32,12 +32,12 @@
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newMemoryWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.disconnect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.sendBinary = new System.Windows.Forms.ToolStripButton();
-            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newMemoryWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -45,9 +45,9 @@
             // dockPanel1
             // 
             this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dockPanel1.Location = new System.Drawing.Point(0, 24);
+            this.dockPanel1.Location = new System.Drawing.Point(0, 49);
             this.dockPanel1.Name = "dockPanel1";
-            this.dockPanel1.Size = new System.Drawing.Size(800, 426);
+            this.dockPanel1.Size = new System.Drawing.Size(800, 401);
             this.dockPanel1.TabIndex = 0;
             // 
             // menuStrip1
@@ -67,6 +67,21 @@
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.OpenSettings);
+            // 
+            // windowToolStripMenuItem
+            // 
+            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newMemoryWindowToolStripMenuItem});
+            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
+            this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+            this.windowToolStripMenuItem.Text = "&Window";
+            // 
+            // newMemoryWindowToolStripMenuItem
+            // 
+            this.newMemoryWindowToolStripMenuItem.Name = "newMemoryWindowToolStripMenuItem";
+            this.newMemoryWindowToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.newMemoryWindowToolStripMenuItem.Text = "New &Memory Window";
+            this.newMemoryWindowToolStripMenuItem.Click += new System.EventHandler(this.NewMemoryWindow);
             // 
             // toolStrip1
             // 
@@ -105,28 +120,13 @@
             this.sendBinary.Text = "Send &Binary";
             this.sendBinary.Click += new System.EventHandler(this.SendBinary);
             // 
-            // windowToolStripMenuItem
-            // 
-            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newMemoryWindowToolStripMenuItem});
-            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
-            this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
-            this.windowToolStripMenuItem.Text = "&Window";
-            // 
-            // newMemoryWindowToolStripMenuItem
-            // 
-            this.newMemoryWindowToolStripMenuItem.Name = "newMemoryWindowToolStripMenuItem";
-            this.newMemoryWindowToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.newMemoryWindowToolStripMenuItem.Text = "New &Memory Window";
-            this.newMemoryWindowToolStripMenuItem.Click += new System.EventHandler(this.NewMemoryWindow);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.dockPanel1);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
