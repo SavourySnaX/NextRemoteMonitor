@@ -140,6 +140,7 @@
             this.ShowIcon = false;
             this.Text = "Upload Binary Data";
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.BankNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BankOffset)).EndInit();
             this.ResumeLayout(false);

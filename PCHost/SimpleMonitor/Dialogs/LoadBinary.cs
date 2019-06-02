@@ -17,12 +17,6 @@ namespace SimpleMonitor
         public LoadBinary()
         {
             InitializeComponent();
-
-            //Location = Properties.Settings.Default.LoadBinary_Location;
-
-            FilePath.Text = Properties.Settings.Default.LoadBinary_FilePath;
-            BankNum.Value = Properties.Settings.Default.LoadBinary_BankNum;
-            BankOffset.Value = Properties.Settings.Default.LoadBinary_BankOffset;
         }
 
         private void OK(object sender, EventArgs e)
@@ -30,7 +24,7 @@ namespace SimpleMonitor
             Properties.Settings.Default.LoadBinary_FilePath = FilePath.Text;
             Properties.Settings.Default.LoadBinary_BankNum = (byte)BankNum.Value;
             Properties.Settings.Default.LoadBinary_BankOffset = (UInt16)BankOffset.Value;
-            //Properties.Settings.Default.LoadBinary_Location = Location;
+            Properties.Settings.Default.LoadBinary_Location = Location;
             Properties.Settings.Default.Save();
 
             try
@@ -88,6 +82,14 @@ namespace SimpleMonitor
         private void Cancel(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void OnLoad(object sender, EventArgs e)
+        {
+            Location = Properties.Settings.Default.LoadBinary_Location;
+            FilePath.Text = Properties.Settings.Default.LoadBinary_FilePath;
+            BankNum.Value = Properties.Settings.Default.LoadBinary_BankNum;
+            BankOffset.Value = Properties.Settings.Default.LoadBinary_BankOffset;
         }
     }
 }

@@ -210,6 +210,7 @@
             this.ShowIcon = false;
             this.Text = "Global Settings";
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.IP0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Port)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IP1)).EndInit();
