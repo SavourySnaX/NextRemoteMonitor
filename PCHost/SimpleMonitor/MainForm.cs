@@ -33,8 +33,8 @@ namespace SimpleMonitor
                 dockPanel1.LoadFromXml("layout.xml", serializeDocks);
             }
 
-            Program.rc.OnConnected = ConnectionMade;
-            Program.rc.OnDisconnected = ConnectionLost;
+            Program.rc.OnConnected = new RemoteControl.Connected(ConnectionMade);
+            Program.rc.OnDisconnected = new RemoteControl.Disconnected(ConnectionLost);
         }
 
         public WeifenLuo.WinFormsUI.Docking.IDockContent LayoutHandler(string name)
@@ -95,20 +95,34 @@ namespace SimpleMonitor
             }
         }
 
-        static void ConnectionMade(string handshake)
+        private void ConnectionMade(string handshake)
         {
             if (mainForm.InvokeRequired)
                 mainForm.Invoke((MethodInvoker)delegate () { ConnectionMade(handshake); });
             else
+            {
+                RefreshAllDockWindows();
                 mainForm.Text = "Spectrum Next Remote Debugger - Connected";
+            }
         }
 
-        static void ConnectionLost()
+        private void ConnectionLost()
         {
             if (mainForm.InvokeRequired)
                 mainForm.Invoke((MethodInvoker)delegate () { ConnectionLost(); });
             else
+            {
+                RefreshAllDockWindows();
                 mainForm.Text = "Spectrum Next Remote Debugger - Waiting for Connection";
+            }
+        }
+
+        private void RefreshAllDockWindows()
+        {
+            foreach (BaseDock dock in myDocks)
+            {
+                dock.ForceRefresh();
+            }
         }
 
         private void OpenSettings(object sender, EventArgs e)
@@ -133,7 +147,10 @@ namespace SimpleMonitor
         {
             using (LoadBinary dialog = new LoadBinary())
             {
-                dialog.ShowDialog();
+                if (dialog.ShowDialog()==DialogResult.OK)
+                {
+                    RefreshAllDockWindows();
+                }
             }
         }
 
@@ -157,6 +174,14 @@ namespace SimpleMonitor
                 dialog.ShowDialog();
             }
 
+        }
+
+        private void NewDisassmView(object sender, EventArgs e)
+        {
+            var t = new DisassemblyView("DisassemblyView");
+            t.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Float);
+            t.Location = new Point(Location.X + Size.Width / 2, Location.Y + Size.Height / 2);
+            myDocks.Add(t);
         }
     }
 }

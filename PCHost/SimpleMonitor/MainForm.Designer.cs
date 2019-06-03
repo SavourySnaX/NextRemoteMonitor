@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.generateNewMonitorTapeFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newMemoryWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,7 +39,7 @@
             this.disconnect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.sendBinary = new System.Windows.Forms.ToolStripButton();
-            this.generateNewMonitorTapeFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newDisassemblyWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -63,6 +64,13 @@
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // generateNewMonitorTapeFileToolStripMenuItem
+            // 
+            this.generateNewMonitorTapeFileToolStripMenuItem.Name = "generateNewMonitorTapeFileToolStripMenuItem";
+            this.generateNewMonitorTapeFileToolStripMenuItem.Size = new System.Drawing.Size(188, 20);
+            this.generateNewMonitorTapeFileToolStripMenuItem.Text = "&Generate New Monitor Tape File";
+            this.generateNewMonitorTapeFileToolStripMenuItem.Click += new System.EventHandler(this.OpenGenerate);
+            // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
@@ -73,7 +81,8 @@
             // windowToolStripMenuItem
             // 
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newMemoryWindowToolStripMenuItem});
+            this.newMemoryWindowToolStripMenuItem,
+            this.newDisassemblyWindowToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "&Window";
@@ -81,7 +90,7 @@
             // newMemoryWindowToolStripMenuItem
             // 
             this.newMemoryWindowToolStripMenuItem.Name = "newMemoryWindowToolStripMenuItem";
-            this.newMemoryWindowToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.newMemoryWindowToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.newMemoryWindowToolStripMenuItem.Text = "New &Memory Window";
             this.newMemoryWindowToolStripMenuItem.Click += new System.EventHandler(this.NewMemoryWindow);
             // 
@@ -122,12 +131,12 @@
             this.sendBinary.Text = "Send &Binary";
             this.sendBinary.Click += new System.EventHandler(this.SendBinary);
             // 
-            // generateNewMonitorTapeFileToolStripMenuItem
+            // newDisassemblyWindowToolStripMenuItem
             // 
-            this.generateNewMonitorTapeFileToolStripMenuItem.Name = "generateNewMonitorTapeFileToolStripMenuItem";
-            this.generateNewMonitorTapeFileToolStripMenuItem.Size = new System.Drawing.Size(188, 20);
-            this.generateNewMonitorTapeFileToolStripMenuItem.Text = "&Generate New Monitor Tape File";
-            this.generateNewMonitorTapeFileToolStripMenuItem.Click += new System.EventHandler(this.OpenGenerate);
+            this.newDisassemblyWindowToolStripMenuItem.Name = "newDisassemblyWindowToolStripMenuItem";
+            this.newDisassemblyWindowToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.newDisassemblyWindowToolStripMenuItem.Text = "New Disassembly Window";
+            this.newDisassemblyWindowToolStripMenuItem.Click += new System.EventHandler(this.NewDisassmView);
             // 
             // MainForm
             // 
@@ -164,6 +173,7 @@
         private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newMemoryWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateNewMonitorTapeFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newDisassemblyWindowToolStripMenuItem;
     }
 }
 

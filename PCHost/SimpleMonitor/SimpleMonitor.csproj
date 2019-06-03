@@ -82,6 +82,12 @@
     <Compile Include="DockableWindows\MemoryView.Designer.cs">
       <DependentUpon>MemoryView.cs</DependentUpon>
     </Compile>
+    <Compile Include="DockableWindows\DisassemblyView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DockableWindows\DisassemblyView.Designer.cs">
+      <DependentUpon>DisassemblyView.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +97,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteControl.cs" />
+    <Compile Include="Z80.cs" />
     <EmbeddedResource Include="Dialogs\GenerateMonitorTap.resx">
       <DependentUpon>GenerateMonitorTap.cs</DependentUpon>
     </EmbeddedResource>
@@ -102,6 +109,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DockableWindows\MemoryView.resx">
       <DependentUpon>MemoryView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DockableWindows\DisassemblyView.resx">
+      <DependentUpon>DisassemblyView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

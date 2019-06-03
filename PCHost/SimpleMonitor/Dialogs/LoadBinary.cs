@@ -36,6 +36,7 @@ namespace SimpleMonitor
                 MessageBox.Show(ex.Message);
                 return;
             }
+            DialogResult = DialogResult.OK;
             Close();
         }
 
@@ -81,6 +82,7 @@ namespace SimpleMonitor
 
         private void Cancel(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Cancel;
             Close();
         }
 

@@ -32,7 +32,7 @@
 ;                   |                       | |  LLHH - Word - Length (limit to 2000 max, since we are using a bank)
 ;       03          | Set next register     | |  RR   - Byte - next register to set
 ;                   |                       | |  VV   - Byte - value to set
-;       04          | Get next register     | |  RR   - Byte - next register to query
+;       04          | Get next register     |*|  RR   - Byte - next register to query
 ;       05          | Set breakpoint        | |  NN   - Byte - breakpoint number (0-63)
 ;                   |                       | |  BB   - Byte - Bank
 ;                   |                       | |  LLHH - Word - Offset to place breakpoint (0-$1FFF)
@@ -86,6 +86,9 @@ MonitorHandshake:
 
 Process:
 	call	Rem_GetRawByte
+
+	cp		4
+	jr		z,_GetNextReg
 
 	cp		2
 	jr		z,_SendData
@@ -172,6 +175,15 @@ _SendLoop:
 	
 	jr		Process
 
+_GetNextReg:
+	call	Rem_GetRawByte	; Get register number
+	ld		bc,ZXN_REG_NUM
+	out		(c),a
+	ld		bc,ZXN_REG_DATA
+	in		a,(c)
+	call	Rem_SendRawByte
+
+	jp		Process
 
 
 Breakpoint:						; TODO needs to grab registers, recover overwritten byte etc.

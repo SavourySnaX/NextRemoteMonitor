@@ -22,6 +22,7 @@ namespace SimpleMonitor.DockableWindows
         {
             var t = new List<Tuple<string, string>>();
             t.Add(Tuple.Create("BankNum.Value", BankNum.Value.ToString()));
+            t.Add(Tuple.Create("ColumnWidth.Value", ColumnWidth.Value.ToString()));
             return t;
         }
 
@@ -32,9 +33,17 @@ namespace SimpleMonitor.DockableWindows
                 case "BankNum.Value":
                     BankNum.Value = Convert.ToDecimal(value);
                     break;
+                case "ColumnWidth.Value":
+                    ColumnWidth.Value = Convert.ToDecimal(value);
+                    break;
                 default:
                     break;
             }
+        }
+
+        public override void ForceRefresh()
+        {
+            RefreshMemory();
         }
 
         public MemoryView(string Type) : base(Type)
@@ -43,8 +52,8 @@ namespace SimpleMonitor.DockableWindows
 
             provider = new MyByteProvider();
             hexBox.ByteProvider = provider;
-            hexBox.BytesPerLine = 8;
             hexBox.LineInfoOffset = 0;
+            hexBox.ContextMenu = null;
 
             currentBank = 255;
             BankNum.Value = 0;
@@ -54,7 +63,10 @@ namespace SimpleMonitor.DockableWindows
 
         void RefreshMemory()
         {
+            hexBox.Enabled = false;
+            Text = $"Memory View - Bank {BankNum.Value}";
             currentBank = (byte)BankNum.Value;
+            hexBox.BytesPerLine = (int)ColumnWidth.Value;
             Program.rc.SendCommand(new RemoteControl.Command(RecvData), currentBank);
         }
 
@@ -88,6 +100,7 @@ namespace SimpleMonitor.DockableWindows
         {
             provider.NewBank(data,bank);
             hexBox.LineInfoOffset = bank * 8192;
+            hexBox.Enabled = true;
         }
 
         class MyByteProvider : IByteProvider
@@ -192,6 +205,11 @@ namespace SimpleMonitor.DockableWindows
         private void ValueChanged(object sender, EventArgs e)
         {
             RefreshMemory();
+        }
+
+        private void WidthChanged(object sender, EventArgs e)
+        {
+            hexBox.BytesPerLine = (int)ColumnWidth.Value;
         }
     }
 }

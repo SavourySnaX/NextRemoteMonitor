@@ -66,6 +66,8 @@ namespace SimpleMonitor.DockableWindows
             return null;
         }
 
+        public virtual void ForceRefresh() { }
+
         protected virtual void Persist(string name,string value) { }
 
         private void BaseDock_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
