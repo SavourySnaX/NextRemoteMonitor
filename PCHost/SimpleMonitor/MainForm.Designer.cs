@@ -38,6 +38,7 @@
             this.disconnect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.sendBinary = new System.Windows.Forms.ToolStripButton();
+            this.generateNewMonitorTapeFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -53,6 +54,7 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateNewMonitorTapeFileToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.windowToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -120,6 +122,13 @@
             this.sendBinary.Text = "Send &Binary";
             this.sendBinary.Click += new System.EventHandler(this.SendBinary);
             // 
+            // generateNewMonitorTapeFileToolStripMenuItem
+            // 
+            this.generateNewMonitorTapeFileToolStripMenuItem.Name = "generateNewMonitorTapeFileToolStripMenuItem";
+            this.generateNewMonitorTapeFileToolStripMenuItem.Size = new System.Drawing.Size(188, 20);
+            this.generateNewMonitorTapeFileToolStripMenuItem.Text = "&Generate New Monitor Tape File";
+            this.generateNewMonitorTapeFileToolStripMenuItem.Click += new System.EventHandler(this.OpenGenerate);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -154,6 +163,7 @@
         private System.Windows.Forms.ToolStripButton sendBinary;
         private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newMemoryWindowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generateNewMonitorTapeFileToolStripMenuItem;
     }
 }
 

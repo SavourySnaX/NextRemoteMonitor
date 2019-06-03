@@ -68,7 +68,11 @@ Rem_Close:
 	jp		TransmitAndDrain
 
 EchoOff:		db		"ATE0",13,10,0
+IF USEIPPLACEHOLDER
+ConnectString:	db		"AT+CIPSTART=\"TCP\",\"RRREPPPLAAACEEE\",REPLACE",0,0,0
+ELSE
 ConnectString:	db		"AT+CIPSTART=\"TCP\",\"192.168.5.2\",9999",13,10,0
+ENDIF
 ContinousMode:	db		"AT+CIPMODE=1",13,10,0
 BeginRaw:		db		"AT+CIPSEND",13,10,0
 HangUp:			db		"+++",0

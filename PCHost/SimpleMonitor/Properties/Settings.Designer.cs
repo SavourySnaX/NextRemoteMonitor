@@ -142,5 +142,41 @@ namespace SimpleMonitor.Properties {
                 this["MainWindow_State"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point GenerateMonitorTap_Location {
+            get {
+                return ((global::System.Drawing.Point)(this["GenerateMonitorTap_Location"]));
+            }
+            set {
+                this["GenerateMonitorTap_Location"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.0.2")]
+        public string GenerateMonitorTap_IpAddress {
+            get {
+                return ((string)(this["GenerateMonitorTap_IpAddress"]));
+            }
+            set {
+                this["GenerateMonitorTap_IpAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GenerateMonitorTap_FilePath {
+            get {
+                return ((string)(this["GenerateMonitorTap_FilePath"]));
+            }
+            set {
+                this["GenerateMonitorTap_FilePath"] = value;
+            }
+        }
     }
 }

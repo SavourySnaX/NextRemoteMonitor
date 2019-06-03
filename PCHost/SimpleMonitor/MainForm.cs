@@ -149,5 +149,14 @@ namespace SimpleMonitor
             t.Location = new Point(Location.X + Size.Width / 2, Location.Y + Size.Height / 2);
             myDocks.Add(t);
         }
+
+        private void OpenGenerate(object sender, EventArgs e)
+        {
+            using (GenerateMonitorTap dialog = new GenerateMonitorTap())
+            {
+                dialog.ShowDialog();
+            }
+
+        }
     }
 }
