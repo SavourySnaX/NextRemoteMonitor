@@ -101,6 +101,11 @@ namespace SimpleMonitor
                 mainForm.Invoke((MethodInvoker)delegate () { ConnectionMade(handshake); });
             else
             {
+                if (handshake != "MON!")
+                {
+                    Program.rc.SendCommand(null, null);
+                    return;
+                }
                 RefreshAllDockWindows();
                 mainForm.Text = "Spectrum Next Remote Debugger - Connected";
             }

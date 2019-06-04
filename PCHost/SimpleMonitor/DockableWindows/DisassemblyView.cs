@@ -70,7 +70,7 @@ namespace SimpleMonitor.DockableWindows
             stream.WriteByte((byte)((offset) & 255));
             stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
 
-            int length = 50;   // maybe make configurable
+            int length = 200;   // maybe make configurable
             stream.WriteByte((byte)((length) & 255));
             stream.WriteByte((byte)(((length) >> 8) & 255)); // size
 
