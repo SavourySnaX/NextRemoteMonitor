@@ -2,7 +2,7 @@
 Spectrum Next Remote Monitor/Debugger
 -------------------------------------
 
-Version 0.0.0.2
+Version 0.0.0.3 (fixes bug with wrong IP being recorded to generated tape)
 
 
 Instructions:

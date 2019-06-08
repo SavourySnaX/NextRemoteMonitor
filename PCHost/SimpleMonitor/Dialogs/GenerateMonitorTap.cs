@@ -45,7 +45,7 @@ namespace SimpleMonitor
             {
                 // Load Monitor program and replace part of the data with the new IP address and port
                 byte[] monitor = File.ReadAllBytes("monitor.dpl");
-                ReplaceBytesInMonitor(monitor, Properties.Settings.Default.GenerateMonitorTap_IpAddress, (UInt16)Port.Value);
+                ReplaceBytesInMonitor(monitor, $"{IP0.Value}.{IP1.Value}.{IP2.Value}.{IP3.Value}", (UInt16)Port.Value);
                 filePath = sfd.FileNames[0];
                 File.WriteAllBytes(filePath, monitor);
 
