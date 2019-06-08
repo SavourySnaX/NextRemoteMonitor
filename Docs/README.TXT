@@ -2,7 +2,7 @@
 Spectrum Next Remote Monitor/Debugger
 -------------------------------------
 
-Version 0.0.0.1
+Version 0.0.0.2
 
 
 Instructions:
@@ -26,6 +26,24 @@ Now put the card back into the Spectrum Next and load the file you saved via the
 
 At this point if all goes well, the Monitors Window title will show `Spectrum Next Remote Debugger - Connected `, if not, check your ESP settings/monitor setttings/firewall, also try restarting the Spectrum Next and reloading the monitor.
 
+
+Proof of concept (SLOW) stepping feature
+----------------------------------------
+
+Version 0.0.0.2 introduces the first version of breakpoints in the monitor code.
+The Remote debugger can be told to download some code and then step through it, however its currently geared up for simple testing...
+
+If you use the send binary button to download some assembled code (<=8192 bytes) to Bank 10, offset 0, you can then enter the command 'test 0' into the console, this will do the following :
+Switch MM6 to Bank 10
+Set a breakpoint on the first instruction
+Start execution at address $C000
+
+(of course, this will immediately hit a breakpoint).
+
+you can then use command 'step' in the console view and it should proceed to execute one instruction. Note step effectively inserts a breakpoint after the current instruction, it is not yet aware of branches etc.
+
+At present it takes quite a while for the various windows to refresh (so stepping can be VERY slow, especially if you have Memory Views open, since at present they grab 8K a piece)
+
 Features:
 ---------
 
@@ -36,17 +54,18 @@ memory live in this view (view bank 10 and try changing bytes).
 All supported windows can be added multiple times.
 All window settings (and dialog) are saved for convenience.
 The application supports docking of windows.
+Disassembler View
+Registers View
+Test Console View (accepts test 0 and step commands)
 
 Future:
 -------
 
-Disassembler View
-Registers View
 Breakpoints
 Stepping (into/over/etc)
 Support for sending/recieving larger blocks of data.
 Next Register View
-
+Improved protocol between next and remote debugger
 
 
 Crude Guide To Configuring the ESP module to connect to your homes network:
