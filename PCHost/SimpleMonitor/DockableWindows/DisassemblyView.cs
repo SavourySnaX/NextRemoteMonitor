@@ -18,6 +18,7 @@ namespace SimpleMonitor.DockableWindows
             var t = new List<Tuple<string, string>>();
             t.Add(Tuple.Create("BankNum.Value", BankNum.Value.ToString()));
             t.Add(Tuple.Create("BankOffset.Value", BankOffset.Value.ToString()));
+            t.Add(Tuple.Create("TrackPC.Checked", trackPC.Checked.ToString()));
             return t;
         }
 
@@ -30,6 +31,9 @@ namespace SimpleMonitor.DockableWindows
                     break;
                 case "BankOffset.Value":
                     BankOffset.Value = Convert.ToDecimal(value);
+                    break;
+                case "TrackPC.Checked":
+                    trackPC.Checked = Convert.ToBoolean(value);
                     break;
                 default:
                     break;
@@ -57,13 +61,47 @@ namespace SimpleMonitor.DockableWindows
         void RefreshMemory()
         {
             Text = $"Disassembly View - {String.Format("{0:X8}",(uint)(BankNum.Value*8192 + BankOffset.Value))}";
-            Program.rc.SendCommand(new RemoteControl.Command(RecvData), (byte)BankNum.Value, (UInt16)BankOffset.Value);
+            Program.rc.SendCommand(new RemoteControl.Command(RecvData), (byte)BankNum.Value, (UInt16)BankOffset.Value, trackPC.Checked);
         }
 
         void RecvData(NetworkStream stream, params object[] arguments)
         {
             byte bank = Convert.ToByte(arguments[0]);
             UInt16 offset = Convert.ToUInt16(arguments[1]);
+            bool trackPC = Convert.ToBoolean(arguments[2]);
+
+            if (trackPC)
+            {
+                // TODO - reduce duplication of queries and values flying around the system
+
+                // Get Current Memory Banks
+                byte[] banks = new byte[8];
+
+                for (int a = 0; a < 8; a++)
+                {
+                    stream.WriteByte(4);
+                    stream.WriteByte((byte)(0x50 + a));
+                    banks[a] = (byte)stream.ReadByte();
+                }
+
+                // Get Current Reg Values
+                stream.WriteByte(8);
+                UInt16[] regs = new UInt16[12];     // AF BC DE HL SP PC IX IY AF' BC' DE' HL'
+                for (int a = 0; a < 12; a++)
+                {
+                    UInt16 t = 0;
+                    byte b = (byte)stream.ReadByte();
+                    t = (byte)stream.ReadByte();
+                    t <<= 8;
+                    t |= b;
+                    regs[a] = t;
+                }
+
+                var bankNum = regs[5] >> 13;
+
+                bank = banks[bankNum];
+                offset = (UInt16)(regs[5] & 0x1FFF);
+            }
 
             stream.WriteByte(2);    // 2 recieve binary data
             stream.WriteByte(bank);    // Bank
@@ -85,42 +123,6 @@ namespace SimpleMonitor.DockableWindows
             }
 
             Invoke((MethodInvoker)delegate () { DataRecieved(data,bank,offset); });
-        }
-
-        class SpectrumNextMemory : MachineInfo
-        {
-            ulong baseAddress;
-            byte[] bytes;
-            public void Init(byte[] data, ulong address)
-            {
-                bytes = data;
-                baseAddress = address;
-            }
-
-            public bool FetchByte(ulong address, out byte _b)
-            {
-                _b = 0xFF;
-                if ((address >= baseAddress) && ((address - baseAddress) < (UInt64)bytes.Length))
-                {
-                    _b = bytes[address - baseAddress];
-                    return true;
-                }
-                return false;
-            }
-
-            public bool FetchWord(ulong address, out ushort _w)
-            {
-                byte l;
-                byte h;
-                _w = 0xFFFF;
-                if (FetchByte(address, out l) && FetchByte(address + 1, out h))
-                {
-                    _w = l;
-                    _w |= ((UInt16)(h << 8));
-                    return true;
-                }
-                return false;
-            }
         }
 
         void DataRecieved(byte[] data,byte bank,UInt16 offset)
@@ -167,5 +169,22 @@ namespace SimpleMonitor.DockableWindows
             Disassembly.Text = s.ToString();
         }
 
+        private void ChangedFollow(object sender, EventArgs e)
+        {
+            bool trackingPC = trackPC.Checked;
+
+            if (trackingPC)
+            {
+                BankNum.Enabled = false;
+                BankOffset.Enabled = false;
+                ForceRefresh();
+            }
+            else
+            {
+                BankNum.Enabled = true;
+                BankOffset.Enabled = true;
+                ForceRefresh();
+            }
+        }
     }
 }

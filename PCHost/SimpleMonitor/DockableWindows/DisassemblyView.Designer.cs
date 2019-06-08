@@ -32,6 +32,7 @@
             this.BankOffset = new System.Windows.Forms.NumericUpDown();
             this.BankNum = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
+            this.trackPC = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.BankOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BankNum)).BeginInit();
             this.SuspendLayout();
@@ -83,11 +84,23 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Bank | Start Offset";
             // 
+            // trackPC
+            // 
+            this.trackPC.AutoSize = true;
+            this.trackPC.Location = new System.Drawing.Point(263, 9);
+            this.trackPC.Name = "trackPC";
+            this.trackPC.Size = new System.Drawing.Size(73, 17);
+            this.trackPC.TabIndex = 9;
+            this.trackPC.Text = "Follow PC";
+            this.trackPC.UseVisualStyleBackColor = true;
+            this.trackPC.CheckedChanged += new System.EventHandler(this.ChangedFollow);
+            // 
             // DisassemblyView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.trackPC);
             this.Controls.Add(this.BankOffset);
             this.Controls.Add(this.BankNum);
             this.Controls.Add(this.label2);
@@ -107,5 +120,6 @@
         private System.Windows.Forms.NumericUpDown BankOffset;
         private System.Windows.Forms.NumericUpDown BankNum;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox trackPC;
     }
 }

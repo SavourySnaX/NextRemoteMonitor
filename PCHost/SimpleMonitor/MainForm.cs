@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -16,7 +17,7 @@ namespace SimpleMonitor
 {
     public partial class MainForm : Form
     {
-        static MainForm mainForm;
+        public static MainForm mainForm;
         public static List<BaseDock> myDocks=new List<BaseDock>();
         WeifenLuo.WinFormsUI.Docking.DeserializeDockContent serializeDocks;
 
@@ -122,11 +123,16 @@ namespace SimpleMonitor
             }
         }
 
-        private void RefreshAllDockWindows()
+        public void RefreshAllDockWindows()
         {
-            foreach (BaseDock dock in myDocks)
+            if (mainForm.InvokeRequired)
+                mainForm.Invoke((MethodInvoker)delegate () { RefreshAllDockWindows(); });
+            else
             {
-                dock.ForceRefresh();
+                foreach (BaseDock dock in myDocks)
+                {
+                    dock.ForceRefresh();
+                }
             }
         }
 
@@ -168,7 +174,6 @@ namespace SimpleMonitor
         {
             var t = new MemoryView("MemoryView");
             t.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Float);
-            t.Location = new Point(Location.X + Size.Width / 2, Location.Y + Size.Height / 2);
             myDocks.Add(t);
         }
 
@@ -185,7 +190,20 @@ namespace SimpleMonitor
         {
             var t = new DisassemblyView("DisassemblyView");
             t.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Float);
-            t.Location = new Point(Location.X + Size.Width / 2, Location.Y + Size.Height / 2);
+            myDocks.Add(t);
+        }
+
+        private void NewRegisterView(object sender, EventArgs e)
+        {
+            var t = new RegisterView("RegisterView");
+            t.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Float);
+            myDocks.Add(t);
+        }
+
+        private void NewConsoleView(object sender, EventArgs e)
+        {
+            var t = new ConsoleView("ConsoleView");
+            t.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Float);
             myDocks.Add(t);
         }
     }

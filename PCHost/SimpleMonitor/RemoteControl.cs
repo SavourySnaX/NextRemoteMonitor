@@ -121,8 +121,6 @@ namespace SimpleMonitor
                         if (res == -1)
                             break;
 
-                        Thread.Sleep(1);
-
                         if (inputStream.Count > 0)
                         {
                             // Translate data bytes to a ASCII string.
@@ -149,6 +147,7 @@ namespace SimpleMonitor
                             else
                             {
                                 result.command(stream, result.arguments);
+                                Thread.Sleep(40);
                             }
                         }
 
