@@ -143,5 +143,21 @@ namespace SimpleMonitor
             stream.WriteByte((byte)((address) & 255));
             stream.WriteByte((byte)(((address) >> 8) & 255)); // Address
         }
+
+        public static void SetIOPort(NetworkStream stream, UInt16 port, byte value)
+        {
+            stream.WriteByte(10);
+            stream.WriteByte((byte)((port) & 255));
+            stream.WriteByte((byte)(((port) >> 8) & 255)); // Address
+            stream.WriteByte(value);
+        }
+
+        public static byte GetIOPort(NetworkStream stream, UInt16 port)
+        {
+            stream.WriteByte(11);
+            stream.WriteByte((byte)((port) & 255));
+            stream.WriteByte((byte)(((port) >> 8) & 255)); // Address
+            return (byte)stream.ReadByte();
+        }
     }
 }
