@@ -96,8 +96,8 @@ namespace SimpleMonitor
                 stream.WriteByte((byte)((offset) & 255));
                 stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
 
-                stream.WriteByte((byte)((length) & 255));
-                stream.WriteByte((byte)(((length) >> 8) & 255)); // size
+                stream.WriteByte((byte)((sLength) & 255));
+                stream.WriteByte((byte)(((sLength) >> 8) & 255)); // size
                 stream.Write(data, position, sLength);
 
                 length -= sLength;
