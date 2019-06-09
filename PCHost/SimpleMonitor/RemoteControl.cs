@@ -107,6 +107,8 @@ namespace SimpleMonitor
 
                     hasConnection = false;
                     // slightly less blocking?
+
+                    DateTime connectionResetAbort = DateTime.Now;
                     while (true)
                     {
                         int res = 0;
@@ -149,6 +151,13 @@ namespace SimpleMonitor
                                 result.command(stream, result.arguments);
                                 Thread.Sleep(40);
                             }
+                        }
+
+                        if (!hasConnection && (DateTime.Now-connectionResetAbort)>TimeSpan.FromSeconds(5))
+                        {
+                            stream.WriteByte(0);
+                            Thread.Sleep(2500);
+                            break;
                         }
 
                     }

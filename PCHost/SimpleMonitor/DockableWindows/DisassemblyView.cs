@@ -72,30 +72,11 @@ namespace SimpleMonitor.DockableWindows
 
             if (trackPC)
             {
-                // TODO - reduce duplication of queries and values flying around the system
-
                 // Get Current Memory Banks
-                byte[] banks = new byte[8];
-
-                for (int a = 0; a < 8; a++)
-                {
-                    stream.WriteByte(4);
-                    stream.WriteByte((byte)(0x50 + a));
-                    banks[a] = (byte)stream.ReadByte();
-                }
+                byte[] banks = NextNetworkHelpers.GetCurrentBanks(stream);
 
                 // Get Current Reg Values
-                stream.WriteByte(8);
-                UInt16[] regs = new UInt16[12];     // AF BC DE HL SP PC IX IY AF' BC' DE' HL'
-                for (int a = 0; a < 12; a++)
-                {
-                    UInt16 t = 0;
-                    byte b = (byte)stream.ReadByte();
-                    t = (byte)stream.ReadByte();
-                    t <<= 8;
-                    t |= b;
-                    regs[a] = t;
-                }
+                UInt16[] regs = NextNetworkHelpers.GetNextState(stream);
 
                 var bankNum = regs[5] >> 13;
 
@@ -103,24 +84,7 @@ namespace SimpleMonitor.DockableWindows
                 offset = (UInt16)(regs[5] & 0x1FFF);
             }
 
-            stream.WriteByte(2);    // 2 recieve binary data
-            stream.WriteByte(bank);    // Bank
-            stream.WriteByte((byte)((offset) & 255));
-            stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
-
-            int length = 200;   // maybe make configurable
-            stream.WriteByte((byte)((length) & 255));
-            stream.WriteByte((byte)(((length) >> 8) & 255)); // size
-
-            byte[] data = new byte[length];
-            int bytesRead = 0;
-            int position = 0;
-            while (length!=0)
-            {
-                bytesRead = stream.Read(data, position, length);
-                length -= bytesRead;
-                position += bytesRead;
-            }
+            byte[] data = NextNetworkHelpers.GetData(stream, bank, offset, 200);
 
             Invoke((MethodInvoker)delegate () { DataRecieved(data,bank,offset); });
         }

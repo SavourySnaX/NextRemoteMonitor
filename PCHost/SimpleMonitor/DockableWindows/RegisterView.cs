@@ -65,7 +65,7 @@ namespace SimpleMonitor.DockableWindows
             Program.rc.SendCommand(new RemoteControl.Command(SetState), null);
         }
 
-        CustomControls.StandardRegister[] registers = new CustomControls.StandardRegister[12];
+        CustomControls.StandardRegister[] registers = new CustomControls.StandardRegister[14];
 
         public RegisterView(string Type) : base(Type)
         {
@@ -84,6 +84,8 @@ namespace SimpleMonitor.DockableWindows
             registers[9] = AddRegister("BC'", "B'", "C'");
             registers[10] = AddRegister("DE'", "D'", "E'");
             registers[11] = AddRegister("HL'", "H'", "L'");
+            registers[12] = AddRegister("IR", "I", "R");
+            registers[13] = AddRegister("IFF2", "IFF2", "");
 
             RefreshRegisters();
         }
@@ -95,34 +97,20 @@ namespace SimpleMonitor.DockableWindows
 
         void GetState(NetworkStream stream, params object[] arguments)
         {
-            stream.WriteByte(8);
-            UInt16[] regs = new UInt16[12];     // AF BC DE HL SP PC IX IY AF' BC' DE' HL'
-            for (int a = 0; a < 12; a++)
-            {
-                UInt16 t = 0;
-                byte b = (byte)stream.ReadByte();
-                t = (byte)stream.ReadByte();
-                t <<= 8;
-                t |= b;
-                regs[a] = t;
-            }
+            var regs = NextNetworkHelpers.GetNextState(stream);
 
             Invoke((MethodInvoker)delegate () { DataRecieved(regs); });
         }
 
         void SetState(NetworkStream stream, params object[] arguments)
         {
-            UInt16[] regs = new UInt16[12];     // AF BC DE HL SP PC IX IY AF' BC' DE' HL'
+            UInt16[] regs = new UInt16[registers.Length];     // AF BC DE HL SP PC IX IY AF' BC' DE' HL' IR IFF2
             for (int a=0;a<regs.Length;a++)
             {
                 regs[a] = (UInt16)registers[a].Value;
             }
-            stream.WriteByte(9);
-            for (int a = 0; a < regs.Length; a++)
-            {
-                stream.WriteByte((byte)(regs[a] & 0xFF));
-                stream.WriteByte((byte)((regs[a] >> 8) & 0xFF));
-            }
+
+            NextNetworkHelpers.SetNextState(stream, regs);
         }
 
         void DataRecieved(UInt16 [] regs)

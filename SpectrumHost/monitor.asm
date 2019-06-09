@@ -39,7 +39,7 @@
 ;       06          | Execute               |*|  LLHH - Word - Address to start execution at (0-$FFFF)
 ;       07          | Resume                |*|
 ;       08          | Get State             |*|  (see SetState for order registers are sent - same as recieved)
-;       09          | Set State             | |  LLHH - AF
+;       09          | Set State             |*|  LLHH - AF
 ;                   |                       | |  LLHH - BC
 ;                   |                       | |  LLHH - DE
 ;                   |                       | |  LLHH - HL
@@ -51,6 +51,8 @@
 ;                   |                       | |  LLHH - BC'
 ;                   |                       | |  LLHH - DE'
 ;                   |                       | |  LLHH - HL'
+;                   |                       | |  LLHH - IR   - The value of R is questionable here since the monitor will change it
+;                   |                       | |  LL00 - IFF2 - bit 2 interrupts enabled/disabled (will currently always be disabled when reading)
 
 	include		"next.defs"
 	include		"monitor.defs"
@@ -273,6 +275,10 @@ _Execute:
 
 _GetState:
 
+	ld		hl,(IFF2)
+	push	hl
+	ld		hl,(RegStoreIR)
+	push	hl
 	exx
 	push	hl
 	push	de
@@ -296,7 +302,7 @@ _GetState:
 	ld		hl,(RegStoreAF)
 	push	hl
 
-	ld		e,12
+	ld		e,14
 _GetStateLoop:
 	pop		hl
 	ld		a,l
@@ -309,12 +315,17 @@ _GetStateLoop:
 	jp		Process
 
 _SetState:
-	ld		l,12
+	ld		l,14
 _SetStateLoop:
 	call	Rem_GetRawWord
 	push	de
 	dec		l
 	jr		nz,_SetStateLoop
+
+	pop		hl
+	ld		(IFF2),hl
+	pop		hl
+	ld		(RegStoreIR),hl
 
 	exx
 	pop		hl
@@ -346,6 +357,12 @@ _SetStateLoop:
 
 ; Currently we only back up what we use!
 
+IFF2:
+	ds		1
+	ds		1
+
+RegStoreIR:
+	ds		2
 RegStoreHL:
 	ds		2
 RegStoreDE:
@@ -429,6 +446,16 @@ Breakpoint:						; TODO needs to grab registers, recover overwritten byte etc.
 	push	af
 	pop		hl
 	ld		(RegStoreAF),hl
+	ld		a,i
+	push	af
+	ld		h,a
+	ld		a,r
+	ld		l,a
+	ld		(RegStoreIR),hl
+	pop		hl
+	ld		a,l
+	ld		(IFF2),a
+
 	ld		hl,(RegStoreSP)
 	ld		c,(hl)
 	inc		hl
@@ -462,6 +489,12 @@ Breakpoint:						; TODO needs to grab registers, recover overwritten byte etc.
 
 	call	Process
 
+	ld		hl,(RegStoreIR)
+	ld		a,l
+	ld		i,a
+	ld		a,h
+	ld		r,a
+
 	ld		hl,(RegStoreAF)
 	push	hl
 	pop		af
@@ -470,7 +503,19 @@ Breakpoint:						; TODO needs to grab registers, recover overwritten byte etc.
 	ld		de,(RegStoreDE)
 	ld		hl,(RegStorePC)
 	push	hl
+	push	af
+	ld		hl,IFF2
+	bit		2,(hl)
+	jr		z,_enableInts
+
+_leaveIntsDisabled:
 	ld		hl,(RegStoreHL)
+	pop		af
+	ret
+_enableInts:
+	ld		hl,(RegStoreHL)
+	pop		af
+	ei
 	ret
 
 	include	"lib_remote.asm"

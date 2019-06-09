@@ -46,15 +46,7 @@ namespace SimpleMonitor
             UInt16 offset = Convert.ToUInt16(arguments[1]);
             byte[] toSend = arguments[2] as byte[];
 
-            stream.WriteByte(1);    // 1 Sending binary data
-            stream.WriteByte(bank);    // Bank
-            stream.WriteByte((byte)((offset) & 255));
-            stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
-
-            UInt16 length = (UInt16)toSend.Length;
-            stream.WriteByte((byte)((length) & 255));
-            stream.WriteByte((byte)(((length) >> 8) & 255)); // size
-            stream.Write(toSend, 0, length);
+            NextNetworkHelpers.SetData(stream, bank, offset, toSend);
         }
 
         private void ChooseFile(object sender, EventArgs e)

@@ -39,43 +39,14 @@ namespace SimpleMonitor.DockableWindows
         private void StepNextInstruction(NetworkStream stream)
         {
             // Fetch bank data
-            byte[] banks = new byte[8];
+            byte[] banks = NextNetworkHelpers.GetCurrentBanks(stream);
 
-            for (int a = 0; a < 8; a++)
-            {
-                stream.WriteByte(4);
-                stream.WriteByte((byte)(0x50 + a));
-                banks[a] = (byte)stream.ReadByte();
-            }
-            // grab registers
-            stream.WriteByte(8);
-            UInt16[] regs = new UInt16[12];     // AF BC DE HL SP PC IX IY AF' BC' DE' HL'
-            for (int a = 0; a < 12; a++)
-            {
-                UInt16 t = 0;
-                byte b = (byte)stream.ReadByte();
-                t = (byte)stream.ReadByte();
-                t <<= 8;
-                t |= b;
-                regs[a] = t;
-            }
+            var regs = NextNetworkHelpers.GetNextState(stream);
 
             // Grab 5 bytes from around the current PC
             byte bank = banks[(byte)(regs[5] >> 13)];
-            uint offset = (uint)(regs[5] & 0x1FFF);
-            stream.WriteByte(2);    // 2 recieve binary data
-            stream.WriteByte(bank);    // Bank
-            stream.WriteByte((byte)((offset) & 255));
-            stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
-            int length = 5;   // maybe make configurable
-            stream.WriteByte((byte)((length) & 255));
-            stream.WriteByte((byte)(((length) >> 8) & 255)); // size
-
-            byte[] data = new byte[length];
-            for (int a=0;a<length;a++)
-            {
-                data[a] = (byte)stream.ReadByte();
-            }
+            UInt16 offset = (UInt16)(regs[5] & 0x1FFF);
+            byte[] data = NextNetworkHelpers.GetData(stream, bank, offset, 5);
 
             // We now want to insert a breakpoint after the current instruction
             //although we will of course need to handle the instructions that change the PC
@@ -89,16 +60,13 @@ namespace SimpleMonitor.DockableWindows
             UInt64 olength = z80.GetLength(memInfo, address);
             address += olength;
             bank = (byte)(address / 8192);
-            offset = (uint)(address & 0x1FFF);
+            offset = (UInt16)(address & 0x1FFF);
 
             // Send command to insert a breakpoint
-            stream.WriteByte(5);
-            stream.WriteByte(bank);   // bank
-            stream.WriteByte((byte)((offset) & 255));
-            stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
-            stream.WriteByte(0); // bp num
+            NextNetworkHelpers.SetBreakpoint(stream, 0, bank, offset);
 
-            stream.WriteByte(7);       // resume
+            NextNetworkHelpers.SendResume(stream);
+
         }
 
         private void RunTest(NetworkStream stream, params object[] arguments)
@@ -109,23 +77,13 @@ namespace SimpleMonitor.DockableWindows
                 case 0:
 
                     // Send command code to setup MM6 bank 10
-                    stream.WriteByte(3);
-                    stream.WriteByte(0x56);
-                    stream.WriteByte(10);
+                    NextNetworkHelpers.SetNextRegister(stream, 0x56, 10);
 
                     // Send command to insert a breakpoint
-                    stream.WriteByte(5);
-                    stream.WriteByte(10);   // bank
-                    UInt16 offset = 0x0000;
-                    stream.WriteByte((byte)((offset) & 255));
-                    stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
-                    stream.WriteByte(0); // bp num
+                    NextNetworkHelpers.SetBreakpoint(stream, 0, 10, 0);
 
                     // Send command to tell monitor to execute code
-                    offset = 0xC000;
-                    stream.WriteByte(6);
-                    stream.WriteByte((byte)((offset) & 255));
-                    stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
+                    NextNetworkHelpers.SendExecute(stream, 0xC000);
                     break;
                 case 1:
                     StepNextInstruction(stream);

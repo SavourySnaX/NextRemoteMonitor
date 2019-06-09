@@ -74,24 +74,7 @@ namespace SimpleMonitor.DockableWindows
         {
             byte bank = Convert.ToByte(arguments[0]);
 
-            stream.WriteByte(2);    // 2 recieve binary data
-            stream.WriteByte(bank);    // Bank
-            stream.WriteByte((byte)((0) & 255));
-            stream.WriteByte((byte)(((0) >> 8) & 255)); // Address
-
-            int length = 8192;
-            stream.WriteByte((byte)((length) & 255));
-            stream.WriteByte((byte)(((length) >> 8) & 255)); // size
-
-            byte[] data = new byte[length];
-            int bytesRead = 0;
-            int position = 0;
-            while (length!=0)
-            {
-                bytesRead = stream.Read(data, position, length);
-                length -= bytesRead;
-                position += bytesRead;
-            }
+            byte[] data = NextNetworkHelpers.GetData(stream, bank, 0, 8192);
 
             Invoke((MethodInvoker)delegate () { DataRecieved(data,bank); });
         }
@@ -186,18 +169,10 @@ namespace SimpleMonitor.DockableWindows
             {
                 byte bank = Convert.ToByte(arguments[0]);
                 UInt16 offset = Convert.ToUInt16(arguments[1]);
-                byte value = Convert.ToByte(arguments[2]);
+                byte[] data = new byte[1];
+                data[0] = Convert.ToByte(arguments[2]);
 
-                stream.WriteByte(1);    // 1 send binary data
-                stream.WriteByte(bank);    // Bank
-                stream.WriteByte((byte)((offset) & 255));
-                stream.WriteByte((byte)(((offset) >> 8) & 255)); // Address
-
-                UInt16 length = 1;
-                stream.WriteByte((byte)((length) & 255));
-                stream.WriteByte((byte)(((length) >> 8) & 255)); // size
-
-                stream.WriteByte(value);
+                NextNetworkHelpers.SetData(stream, bank, offset, data);
             }
 
         }
