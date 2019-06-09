@@ -56,7 +56,6 @@ namespace SimpleMonitor
             while (length > 0)
             {
                 int sLength = Math.Min(length, 8192-offset);
-                Console.WriteLine($"{length}:{sLength}");
 
                 stream.WriteByte(2);    // 2 recieve binary data
                 stream.WriteByte(bank);    // Bank
@@ -71,7 +70,6 @@ namespace SimpleMonitor
                 while (sLength > 0)
                 {
                     bytesRead = stream.Read(data, position, sLength);
-                    Console.WriteLine(bytesRead);
                     sLength -= bytesRead;
                     position += bytesRead;
                 }
