@@ -64,32 +64,35 @@ namespace CustomControls
             {
                 SetValue(_value);
             }
-            var oldValue = _value;
-
-            if (enteredValue[0] == '$')
-            {
-                if (int.TryParse(enteredValue.TrimStart('$'), System.Globalization.NumberStyles.HexNumber, null, out int newValue))
-                {
-                    SetValue(newValue);
-                    if (newValue!= oldValue)
-                        ValueUpdated?.Invoke(this, EventArgs.Empty);
-                }
-                else
-                {
-                    SetValue(_value);
-                }
-            }
             else
             {
-                if (int.TryParse(enteredValue, out int newValue))
+                var oldValue = _value;
+
+                if (enteredValue[0] == '$')
                 {
-                    SetValue(newValue);
-                    if (newValue!= oldValue)
-                        ValueUpdated?.Invoke(this, EventArgs.Empty);
+                    if (int.TryParse(enteredValue.TrimStart('$'), System.Globalization.NumberStyles.HexNumber, null, out int newValue))
+                    {
+                        SetValue(newValue);
+                        if (newValue != oldValue)
+                            ValueUpdated?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        SetValue(_value);
+                    }
                 }
                 else
                 {
-                    SetValue(_value);
+                    if (int.TryParse(enteredValue, out int newValue))
+                    {
+                        SetValue(newValue);
+                        if (newValue != oldValue)
+                            ValueUpdated?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        SetValue(_value);
+                    }
                 }
             }
         }
