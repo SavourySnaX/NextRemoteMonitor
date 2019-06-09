@@ -91,6 +91,26 @@ namespace SimpleMonitor.DockableWindows
             }
             MainForm.mainForm.RefreshAllDockWindows();
         }
+        
+        void RunOut(NetworkStream stream, params object[] arguments)
+        {
+            UInt16 port = Convert.ToUInt16(arguments[0]);
+            byte value = Convert.ToByte(arguments[1]);
+
+            NextNetworkHelpers.SetIOPort(stream, port, value);
+        }
+
+        private int ParseNumber(string value)
+        {
+            if (value[0] == '$')
+            {
+                return int.Parse(value.TrimStart('$'), System.Globalization.NumberStyles.HexNumber);
+            }
+            else
+            {
+                return int.Parse(value);
+            }
+        }
 
         private void CommandInput(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
@@ -112,6 +132,10 @@ namespace SimpleMonitor.DockableWindows
                 if (split[0] == "step" || split[0]=="s")
                 {
                     Program.rc.SendCommand(new RemoteControl.Command(RunTest), 1);
+                }
+                if (split[0] == "out" && split.Length==3)
+                {
+                    Program.rc.SendCommand(new RemoteControl.Command(RunOut), ParseNumber(split[1]), ParseNumber(split[2]));
                 }
             }
         }
