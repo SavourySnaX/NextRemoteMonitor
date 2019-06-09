@@ -81,10 +81,9 @@ namespace SimpleMonitor
             return data;
         }
 
-        public static void SetData(NetworkStream stream, byte bank, UInt16 offset, byte[] data)
+        public static void SetData(NetworkStream stream, byte bank, UInt16 offset, byte[] data, int position=0)
         {
-            int length = data.Length;
-            int position = 0;
+            int length = data.Length-position;
 
             // Copes with any reasonable length
             while (length>0)
