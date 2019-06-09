@@ -79,6 +79,7 @@ namespace SimpleMonitor
                 }
 
                 offset = 0;
+                bank++;
             }
 
             return data;
@@ -106,6 +107,7 @@ namespace SimpleMonitor
                 length -= sLength;
                 offset = 0;
                 position += sLength;
+                bank++;
             }
         }
 
