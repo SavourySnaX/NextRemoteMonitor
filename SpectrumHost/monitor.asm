@@ -98,6 +98,8 @@ MonitorHandshake:
 Process:
 	call	Rem_GetRawByte
 
+	cp		9
+	jp		z,_SetState
 	cp		8
 	jp		z,_GetState
 	cp		7		; resume special case for debugging
@@ -295,16 +297,50 @@ _GetState:
 	push	hl
 
 	ld		e,12
-_StateLoop:
+_GetStateLoop:
 	pop		hl
 	ld		a,l
 	call	Rem_SendRawByte
 	ld		a,h
 	call	Rem_SendRawByte
 	dec		e
-	jr		nz,_StateLoop
+	jr		nz,_GetStateLoop
 	
 	jp		Process
+
+_SetState:
+	ld		l,12
+_SetStateLoop:
+	call	Rem_GetRawWord
+	push	de
+	dec		l
+	jr		nz,_SetStateLoop
+
+	exx
+	pop		hl
+	pop		de
+	pop		bc
+	exx
+	ex		af,af'
+	pop		af
+	ex		af,af'
+	pop		iy
+	pop		ix
+	pop		hl
+	ld		(RegStorePC),hl
+	pop		hl
+	ld		(RegStoreSP),hl
+	pop		hl
+	ld		(RegStoreHL),hl
+	pop		hl
+	ld		(RegStoreDE),hl
+	pop		hl
+	ld		(RegStoreBC),hl
+	pop		hl
+	ld		(RegStoreAF),hl
+
+	jp		Process
+
 
 	db		"LOOKHERE"
 

@@ -17,6 +17,7 @@ namespace CustomControls
             InitializeComponent();
         }
 
+        public event EventHandler RegisterChanged;
 
         public void SetRegisterName(string pair,string hi,string lo)
         {
@@ -53,34 +54,24 @@ namespace CustomControls
 
         private void PairChanged(object sender, EventArgs e)
         {
-            int newHigh = valuePair.Value >> 8;
-            int newLow = valuePair.Value & 255;
+            Value = valuePair.Value;
 
-            if (valueLow.Value != newLow)
-                valueLow.SetValue(newLow);
-            if (valueHigh.Value != newHigh)
-                valueHigh.SetValue(newHigh);
+            RegisterChanged?.Invoke(this, e);
         }
 
         private void HighChanged(object sender, EventArgs e)
         {
-            int newPair = (valuePair.Value & 255) | (valueHigh.Value << 8);
+            Value = (valuePair.Value & 255) | (valueHigh.Value << 8);
 
-            if (valuePair.Value != newPair)
-                valuePair.SetValue(newPair);
+            RegisterChanged?.Invoke(this, e);
         }
 
         private void LowChanged(object sender, EventArgs e)
         {
-            int newPair = (valuePair.Value & 0xFF00) | (valueLow.Value & 255);
+            Value = (valuePair.Value & 0xFF00) | (valueLow.Value & 255);
 
-            if (valuePair.Value != newPair)
-                valuePair.SetValue(newPair);
+            RegisterChanged?.Invoke(this, e);
         }
 
-        private void valuePair_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

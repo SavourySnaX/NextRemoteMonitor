@@ -75,6 +75,7 @@
             this.valueLow.Size = new System.Drawing.Size(42, 22);
             this.valueLow.TabIndex = 10;
             this.valueLow.ValueSize = 2;
+            this.valueLow.ValueUpdated += new System.EventHandler(this.LowChanged);
             // 
             // valueHigh
             // 
@@ -85,6 +86,7 @@
             this.valueHigh.Size = new System.Drawing.Size(42, 22);
             this.valueHigh.TabIndex = 9;
             this.valueHigh.ValueSize = 2;
+            this.valueHigh.ValueUpdated += new System.EventHandler(this.HighChanged);
             // 
             // valuePair
             // 
@@ -95,6 +97,7 @@
             this.valuePair.Size = new System.Drawing.Size(59, 22);
             this.valuePair.TabIndex = 6;
             this.valuePair.ValueSize = 4;
+            this.valuePair.ValueUpdated += new System.EventHandler(this.PairChanged);
             // 
             // StandardRegister
             // 

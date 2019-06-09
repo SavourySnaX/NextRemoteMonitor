@@ -55,8 +55,14 @@ namespace SimpleMonitor.DockableWindows
             control.SetRegisterName(pair, high, low);
             control.Value = 0x1234;
             control.ShowHex = true;
+            control.RegisterChanged += RegisterChanged;
             flowLayoutPanel1.Controls.Add(control);
             return control;
+        }
+
+        private void RegisterChanged(object sender, EventArgs e)
+        {
+            Program.rc.SendCommand(new RemoteControl.Command(SetState), null);
         }
 
         CustomControls.StandardRegister[] registers = new CustomControls.StandardRegister[12];
@@ -102,6 +108,21 @@ namespace SimpleMonitor.DockableWindows
             }
 
             Invoke((MethodInvoker)delegate () { DataRecieved(regs); });
+        }
+
+        void SetState(NetworkStream stream, params object[] arguments)
+        {
+            UInt16[] regs = new UInt16[12];     // AF BC DE HL SP PC IX IY AF' BC' DE' HL'
+            for (int a=0;a<regs.Length;a++)
+            {
+                regs[a] = (UInt16)registers[a].Value;
+            }
+            stream.WriteByte(9);
+            for (int a = 0; a < regs.Length; a++)
+            {
+                stream.WriteByte((byte)(regs[a] & 0xFF));
+                stream.WriteByte((byte)((regs[a] >> 8) & 0xFF));
+            }
         }
 
         void DataRecieved(UInt16 [] regs)

@@ -64,13 +64,15 @@ namespace CustomControls
             {
                 SetValue(_value);
             }
+            var oldValue = _value;
 
             if (enteredValue[0] == '$')
             {
                 if (int.TryParse(enteredValue.TrimStart('$'), System.Globalization.NumberStyles.HexNumber, null, out int newValue))
                 {
                     SetValue(newValue);
-                    ValueUpdated?.Invoke(this, EventArgs.Empty);
+                    if (newValue!= oldValue)
+                        ValueUpdated?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
@@ -82,7 +84,8 @@ namespace CustomControls
                 if (int.TryParse(enteredValue, out int newValue))
                 {
                     SetValue(newValue);
-                    ValueUpdated?.Invoke(this, EventArgs.Empty);
+                    if (newValue!= oldValue)
+                        ValueUpdated?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
