@@ -53,6 +53,9 @@
 ;                   |                       | |  LLHH - HL'
 ;                   |                       | |  LLHH - IR   - The value of R is questionable here since the monitor will change it
 ;                   |                       | |  LL00 - IFF2 - bit 2 interrupts enabled/disabled (will currently always be disabled when reading)
+;       0A          | Set io port           |*|  LLHH - Port - port to set
+;                   |                       | |  VV   - Byte - value to set
+;       0B          | Get io port           |*|  LLHH - Port - port whose value to fetch
 
 	include		"next.defs"
 	include		"monitor.defs"
@@ -92,40 +95,48 @@ MonitorStart:
 	ld		hl,(ExitAddress)
 	push	hl
 
-	call	CRASH
+	jp	CRASH
 
 MonitorHandshake:
 	db		"MON!",0
 
+// Fine for upto 128 commands
+Commands:
+	dw		RecvData			; Starts at offset 1 !
+	dw		SendData
+	dw		SetNextReg
+	dw		GetNextReg
+	dw		SetBreakpoint
+	dw		Execute
+	dw		Resume
+	dw		GetState
+	dw		SetState
+	dw		SetIOPort
+	dw		GetIOPort
+
+NumCommands	EQU	(($-Commands) /2) 
+
 Process:
 	call	Rem_GetRawByte
 
-	cp		9
-	jp		z,_SetState
-	cp		8
-	jp		z,_GetState
-	cp		7		; resume special case for debugging
-	ret		z
-	cp		6
-	jp		z,_Execute
-	cp		5
-	jp		z,_SetBreakpoint
-	cp		4
-	jp		z,_GetNextReg
-	cp		3
-	jr		z,_SetNextReg
-	cp		2
-	jr		z,_SendData
-	cp		1
-	jr		z,_RecvData
-	cp		0
-	jr		nz,Process
+	and		a
+	jp		z,Rem_Close
 
-_Exit:
+	dec		a
 
-	jp		Rem_Close
+	cp		NumCommands
+	jp		nc,Rem_Close
 
-_RecvData:
+	add		a,a
+	ld		hl,Commands
+	add		hl,a
+	ld		a,(hl)
+	inc		hl
+	ld		h,(hl)
+	ld		l,a
+	jp		(hl)
+
+RecvData:
 	; Record current MMU7 page
 	ld		bc,ZXN_REG_NUM
 	ld		a,ZXNR_MMU7
@@ -162,7 +173,7 @@ _RecvLoop:
 	
 	jr		Process
 
-_SendData:
+SendData:
 	; Record current MMU7 page
 	ld		bc,ZXN_REG_NUM
 	ld		a,ZXNR_MMU7
@@ -199,7 +210,7 @@ _SendLoop:
 	
 	jp		Process
 
-_SetNextReg:
+SetNextReg:
 	call	Rem_GetRawByte	; Get register number
 	ld		bc,ZXN_REG_NUM
 	out		(c),a
@@ -209,7 +220,7 @@ _SetNextReg:
 
 	jp		Process
 
-_GetNextReg:
+GetNextReg:
 	call	Rem_GetRawByte	; Get register number
 	ld		bc,ZXN_REG_NUM
 	out		(c),a
@@ -219,7 +230,7 @@ _GetNextReg:
 
 	jp		Process
 
-_SetBreakpoint:
+SetBreakpoint:
 	; Record current MMU7 page
 	ld		bc,ZXN_REG_NUM
 	ld		a,ZXNR_MMU7
@@ -267,13 +278,14 @@ _SetBreakpoint:
 	
 	jp		Process
 
-_Execute:
+Execute:
 	call	Rem_GetRawWord	; Address to jump to
 
 	push	de
+Resume:
 	ret
 
-_GetState:
+GetState:
 
 	ld		hl,(IFF2)
 	push	hl
@@ -314,7 +326,7 @@ _GetStateLoop:
 	
 	jp		Process
 
-_SetState:
+SetState:
 	ld		l,14
 _SetStateLoop:
 	call	Rem_GetRawWord
@@ -350,6 +362,22 @@ _SetStateLoop:
 	pop		hl
 	ld		(RegStoreAF),hl
 
+	jp		Process
+
+SetIOPort:
+	call	Rem_GetRawWord
+	call	Rem_GetRawByte
+	ld		c,e
+	ld		b,d
+	out		(c),a
+	jp		Process
+
+GetIOPort:
+	call	Rem_GetRawWord
+	ld		c,e
+	ld		b,d
+	in		a,(c)
+	call	Rem_SendRawByte
 	jp		Process
 
 
