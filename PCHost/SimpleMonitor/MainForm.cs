@@ -206,5 +206,35 @@ namespace SimpleMonitor
             t.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Float);
             myDocks.Add(t);
         }
+
+        private void SendSNA(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            ofd.InitialDirectory = "";
+            ofd.Filter = "Snapshot files (*.SNA)|*.SNA";
+            ofd.FilterIndex = 1;
+            ofd.RestoreDirectory = true;
+            ofd.Multiselect = false;
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                byte[] data = File.ReadAllBytes(ofd.FileNames[0]);
+
+                Program.rc.SendCommand(new RemoteControl.Command(SendSNA), data);
+            }
+        }
+
+        void SendSNA(NetworkStream stream, params object[] arguments)
+        {
+            byte[] toSend = arguments[0] as byte[];
+
+            NextNetworkHelpers.SetData(stream, 10, 0, toSend, 27);
+            // todo restore the registers etc.
+        }
+
+
+
+
     }
 }

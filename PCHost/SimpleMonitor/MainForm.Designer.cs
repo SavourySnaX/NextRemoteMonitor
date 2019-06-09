@@ -34,6 +34,7 @@
             this.generateNewMonitorTapeFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newConsoleWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newMemoryWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newDisassemblyWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newRegisterWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,7 +42,8 @@
             this.disconnect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.sendBinary = new System.Windows.Forms.ToolStripButton();
-            this.newConsoleWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.sendSNA = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -91,6 +93,13 @@
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "&Window";
             // 
+            // newConsoleWindowToolStripMenuItem
+            // 
+            this.newConsoleWindowToolStripMenuItem.Name = "newConsoleWindowToolStripMenuItem";
+            this.newConsoleWindowToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.newConsoleWindowToolStripMenuItem.Text = "New &Console Window";
+            this.newConsoleWindowToolStripMenuItem.Click += new System.EventHandler(this.NewConsoleView);
+            // 
             // newMemoryWindowToolStripMenuItem
             // 
             this.newMemoryWindowToolStripMenuItem.Name = "newMemoryWindowToolStripMenuItem";
@@ -117,7 +126,9 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.disconnect,
             this.toolStripSeparator1,
-            this.sendBinary});
+            this.sendBinary,
+            this.toolStripSeparator2,
+            this.sendSNA});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -149,12 +160,20 @@
             this.sendBinary.Text = "Send &Binary";
             this.sendBinary.Click += new System.EventHandler(this.SendBinary);
             // 
-            // newConsoleWindowToolStripMenuItem
+            // toolStripSeparator2
             // 
-            this.newConsoleWindowToolStripMenuItem.Name = "newConsoleWindowToolStripMenuItem";
-            this.newConsoleWindowToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.newConsoleWindowToolStripMenuItem.Text = "New &Console Window";
-            this.newConsoleWindowToolStripMenuItem.Click += new System.EventHandler(this.NewConsoleView);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // sendSNA
+            // 
+            this.sendSNA.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.sendSNA.Image = ((System.Drawing.Image)(resources.GetObject("sendSNA.Image")));
+            this.sendSNA.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.sendSNA.Name = "sendSNA";
+            this.sendSNA.Size = new System.Drawing.Size(63, 22);
+            this.sendSNA.Text = "Send S&NA";
+            this.sendSNA.Click += new System.EventHandler(this.SendSNA);
             // 
             // MainForm
             // 
@@ -194,6 +213,8 @@
         private System.Windows.Forms.ToolStripMenuItem newDisassemblyWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newRegisterWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newConsoleWindowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton sendSNA;
     }
 }
 
