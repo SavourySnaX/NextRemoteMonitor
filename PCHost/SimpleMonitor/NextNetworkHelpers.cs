@@ -42,9 +42,7 @@ namespace SimpleMonitor
             byte[] banks = new byte[8];
             for (int a = 0; a < 8; a++)
             {
-                stream.WriteByte(4);
-                stream.WriteByte((byte)(0x50 + a));
-                banks[a] = (byte)stream.ReadByte();
+                banks[a] = GetNextRegister(stream, (byte)(0x50 + a));
             }
             return banks;
         }
@@ -130,6 +128,13 @@ namespace SimpleMonitor
             stream.WriteByte(3);
             stream.WriteByte(register);
             stream.WriteByte(value);
+        }
+
+        public static byte GetNextRegister(NetworkStream stream, byte register)
+        {
+            stream.WriteByte(4);
+            stream.WriteByte(register);
+            return (byte)stream.ReadByte();
         }
 
         public static void SendExecute(NetworkStream stream, UInt16 address)
