@@ -229,8 +229,96 @@ namespace SimpleMonitor
         {
             byte[] toSend = arguments[0] as byte[];
 
+            NextNetworkHelpers.SetNextRegister(stream, 0x56, 10);
+
+            // Send command to insert a breakpoint
+            NextNetworkHelpers.SetBreakpoint(stream, 0, 10, 0);
+
+            // Send command to tell monitor to execute code
+            NextNetworkHelpers.SendExecute(stream, 0xC000);
+
+
+            // Plan for 48K snaps is as follows :
+            //The monitor code is normally mapped in at MMU0, but ideally we want the 48k ROM
+            //and some modifications to lie there, for now I`ll achieve this by:
+            //
+            // Map 8K Pages as follows : 
+            // Page 8
+            // Page 9
+            // Page 10
+            // Page 11 
+            // Page 12
+            // Page 13
+            // Page 14
+            // Page 15
+
+            var romBytes = File.ReadAllBytes("c:\\work\\next\\48.rom");
+
+            //patch rst 66 - 14 byte area to account for retn needs
+            for (int a = 0; a < 7; a++)
+            {
+                romBytes[0x66 + a * 2] = 0xED;
+                romBytes[0x67 + a * 2] = 0x45;
+            }
+
+            NextNetworkHelpers.SetData(stream, 8, 0, romBytes);
+
+            // AF BC DE HL SP PC IX IY AF' BC' DE' HL' IR IFF2
+            UInt16[] regs = new ushort[14];
+            regs[12] = toSend[0];
+            regs[11] = toSend[1];
+            regs[11]|= (UInt16)(toSend[2]<<8);
+            regs[10] = toSend[3];
+            regs[10]|= (UInt16)(toSend[4]<<8);
+            regs[9] = toSend[5];
+            regs[9]|= (UInt16)(toSend[6]<<8);
+            regs[8] = toSend[7];
+            regs[8]|= (UInt16)(toSend[8]<<8);
+            regs[3] = toSend[9];
+            regs[3]|= (UInt16)(toSend[10]<<8);
+            regs[2] = toSend[11];
+            regs[2]|= (UInt16)(toSend[12]<<8);
+            regs[1] = toSend[13];
+            regs[1]|= (UInt16)(toSend[14]<<8);
+            regs[7] = toSend[15];
+            regs[7]|= (UInt16)(toSend[16]<<8);
+            regs[6] = toSend[17];
+            regs[6]|= (UInt16)(toSend[18]<<8);
+            regs[13] = (UInt16)((toSend[19] & 4) | ((toSend[19] & 4) << 8));
+            regs[12]|= (UInt16)(toSend[20]<<8);
+            regs[0] = toSend[21];
+            regs[0]|= (UInt16)(toSend[22]<<8);
+            regs[4] = toSend[23];
+            regs[4] |= (UInt16)(toSend[24] << 8);
+            regs[5] = 0x66;
+            int interruptMode = toSend[25];
+            byte currentPortValue = NextNetworkHelpers.GetIOPort(stream, 254);
+            currentPortValue &= 0xF8;
+            currentPortValue |= (byte)(toSend[26] & 0x07);
+            NextNetworkHelpers.SetIOPort(stream, 254, currentPortValue);
+
             NextNetworkHelpers.SetData(stream, 10, 0, toSend, 27);
-            // todo restore the registers etc.
+
+            NextNetworkHelpers.SetNextState(stream, regs);
+
+            // todo should switch on layer 2 write mode to prevent 
+            //programs writing over rom area
+
+            // Don't page in first bank yet, 
+            //NextNetworkHelpers.SetNextRegister(stream, 0x50, 8);
+            NextNetworkHelpers.SetNextRegister(stream, 0x51, 9);
+            NextNetworkHelpers.SetNextRegister(stream, 0x52, 10);
+            NextNetworkHelpers.SetNextRegister(stream, 0x53, 11);
+            NextNetworkHelpers.SetNextRegister(stream, 0x54, 12);
+            NextNetworkHelpers.SetNextRegister(stream, 0x55, 13);
+            NextNetworkHelpers.SetNextRegister(stream, 0x56, 14);
+            NextNetworkHelpers.SetNextRegister(stream, 0x57, 15);
+
+ //           NextNetworkHelpers.SetBreakpoint(stream, 0, 111, 0x66);
+
+            // Will cause a jump to address 0x66 where a small routine will handle the
+            //final handover
+            NextNetworkHelpers.SendResume(stream);
         }
 
 

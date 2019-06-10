@@ -26,6 +26,7 @@ namespace SimpleMonitor
             return regs;
         }
 
+        // AF BC DE HL SP PC IX IY AF' BC' DE' HL' IR IFF2
         public static void SetNextState(NetworkStream stream, UInt16 [] regs)
         {
             stream.WriteByte(9);

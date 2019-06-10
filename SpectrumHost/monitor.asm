@@ -62,18 +62,20 @@
 
 	org		$0000
 
-rst00
+rst00:
 	di								; 1 byte
 	NextReg	ZXNR_MMU0,MONITOR_BANK	; 4 bytes
 	jp		Breakpoint				; 3 bytes
-rst08
+rst08:
 	jp		MonitorStart			; A should contain return bank, stack contains return address
-
 	org		$0038
-rst38
+rst38:
 	ei
 	reti							; .. incase interrupted while paged... (e.g. doing a delay)
 
+	org		$0066
+	NextReg ZXNR_MMU0, 8
+	retn
 
 ExitBank:
 	db		0
